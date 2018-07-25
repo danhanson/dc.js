@@ -47,6 +47,7 @@ dc.compositeChart = function (parent, chartGroup) {
         for (var i = 0; i < _children.length; ++i) {
             var child = _children[i];
 
+            child.svg(_chart.svg());
             generateChildG(child, i);
 
             if (!child.dimension()) {
@@ -57,7 +58,6 @@ dc.compositeChart = function (parent, chartGroup) {
             }
 
             child.chartGroup(_chart.chartGroup());
-            child.svg(_chart.svg());
             child.xUnits(_chart.xUnits());
             child.transitionDuration(_chart.transitionDuration(), _chart.transitionDelay());
             child.parentBrushOn(_chart.brushOn());
@@ -110,8 +110,8 @@ dc.compositeChart = function (parent, chartGroup) {
         var ranges;
 
         if (left) {
-            lyAxisMin = yAxisMin();
-            lyAxisMax = yAxisMax();
+            lyAxisMin = _chart.yAxisMin();
+            lyAxisMax = _chart.yAxisMax();
         }
 
         if (right) {
@@ -447,10 +447,9 @@ dc.compositeChart = function (parent, chartGroup) {
         });
     }
 
-    delete _chart.yAxisMin;
-    function yAxisMin () {
+    dc.override(_chart, 'yAxisMin', function () {
         return d3.min(getYAxisMin(leftYAxisChildren()));
-    }
+    });
 
     function rightYAxisMin () {
         return d3.min(getYAxisMin(rightYAxisChildren()));
@@ -462,10 +461,9 @@ dc.compositeChart = function (parent, chartGroup) {
         });
     }
 
-    delete _chart.yAxisMax;
-    function yAxisMax () {
+    dc.override(_chart, 'yAxisMax', function () {
         return dc.utils.add(d3.max(getYAxisMax(leftYAxisChildren())), _chart.yAxisPadding());
-    }
+    });
 
     function rightYAxisMax () {
         return dc.utils.add(d3.max(getYAxisMax(rightYAxisChildren())), _chart.yAxisPadding());
